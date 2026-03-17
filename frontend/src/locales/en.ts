@@ -72,6 +72,9 @@ export default {
     newChat: 'New Chat',
     loadSessionsFailed: 'Failed to load sessions:',
     loadMessagesFailed: 'Failed to load session messages:',
+    mentionTitle: 'Select data or layer',
+    mentionData: 'Data',
+    mentionLayer: 'Layer',
   },
   map: {
     layerManagement: 'Layer Management',

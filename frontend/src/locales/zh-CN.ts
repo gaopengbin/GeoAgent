@@ -72,6 +72,9 @@ export default {
     newChat: '新对话',
     loadSessionsFailed: '加载会话列表失败:',
     loadMessagesFailed: '加载会话消息失败:',
+    mentionTitle: '选择数据或图层',
+    mentionData: '数据',
+    mentionLayer: '图层',
   },
   map: {
     layerManagement: '图层管理',

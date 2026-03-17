@@ -151,6 +151,24 @@
 
     <!-- 输入区域 -->
     <div class="input-area">
+      <!-- @ Mention 弹出菜单 -->
+      <transition name="fade">
+        <div v-if="showMention && filteredMentionItems.length" class="mention-menu">
+          <div class="mention-header">{{ $t('chat.mentionTitle') }}</div>
+          <div
+            v-for="(item, idx) in filteredMentionItems"
+            :key="item.id"
+            class="mention-item"
+            :class="{ active: idx === mentionActiveIndex }"
+            @mousedown.prevent="selectMention(item)"
+            @mouseenter="mentionActiveIndex = idx"
+          >
+            <span class="mention-icon">{{ item.icon }}</span>
+            <span class="mention-name">{{ item.name }}</span>
+            <span class="mention-tag">{{ item.tag }}</span>
+          </div>
+        </div>
+      </transition>
       <div class="input-row">
         <button class="attach-btn" :class="{ uploading: uploadProgress > 0 }" :title="$t('chat.uploadFile')" @click="triggerFileInput">
           <svg v-if="!uploadProgress" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -171,8 +189,8 @@
           class="chat-input"
           :placeholder="$t('chat.inputPlaceholder')"
           rows="1"
-          @keydown.enter.exact="handleSend"
-          @input="autoResize"
+          @keydown="onInputKeydown"
+          @input="onInputChange"
         />
         <button
           v-if="isStreaming"
@@ -233,12 +251,14 @@ import { ref, computed, nextTick, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useChatStore } from '../stores/chatStore'
 import { useResultStore } from '../stores/resultStore'
+import { useMapStore } from '../stores/mapStore'
 import { apiUpload } from '../api/client'
 import MarkdownIt from 'markdown-it'
 
 const { t } = useI18n()
 const chatStore = useChatStore()
 const resultStore = useResultStore()
+const mapStore = useMapStore()
 const md = new MarkdownIt({ html: false, linkify: true })
 
 const defaultFence = md.renderer.rules.fence!
@@ -348,6 +368,113 @@ function autoResize() {
   if (!el) return
   el.style.height = 'auto'
   el.style.height = Math.min(el.scrollHeight, 120) + 'px'
+}
+
+// ==================== @ Mention ====================
+
+interface MentionItem {
+  id: string
+  name: string
+  icon: string
+  tag: string
+}
+
+const showMention = ref(false)
+const mentionStartIndex = ref(-1)
+const mentionFilter = ref('')
+const mentionActiveIndex = ref(0)
+
+const mentionItems = computed<MentionItem[]>(() => {
+  const items: MentionItem[] = []
+  for (const dl of resultStore.dataLayers) {
+    items.push({
+      id: dl.dataRefId!,
+      name: `${dl.toolName}: ${dl.summary?.slice(0, 40) || dl.dataRefId}`,
+      icon: '📊',
+      tag: t('chat.mentionData'),
+    })
+  }
+  for (const layer of mapStore.layers) {
+    items.push({
+      id: layer.id,
+      name: layer.name || layer.id,
+      icon: '🗺️',
+      tag: t('chat.mentionLayer'),
+    })
+  }
+  return items
+})
+
+const filteredMentionItems = computed(() => {
+  if (!mentionFilter.value) return mentionItems.value
+  const f = mentionFilter.value.toLowerCase()
+  return mentionItems.value.filter(i => i.name.toLowerCase().includes(f) || i.id.toLowerCase().includes(f))
+})
+
+function detectMention() {
+  const ta = inputRef.value
+  if (!ta) return
+  const pos = ta.selectionStart
+  const text = inputText.value.substring(0, pos)
+  const lastAt = text.lastIndexOf('@')
+  if (lastAt >= 0 && (lastAt === 0 || /[\s\n]/.test(text[lastAt - 1]))) {
+    mentionStartIndex.value = lastAt
+    mentionFilter.value = text.substring(lastAt + 1)
+    mentionActiveIndex.value = 0
+    showMention.value = true
+  } else {
+    showMention.value = false
+  }
+}
+
+function selectMention(item: MentionItem) {
+  const start = mentionStartIndex.value
+  const ta = inputRef.value!
+  const pos = ta.selectionStart
+  const before = inputText.value.substring(0, start)
+  const after = inputText.value.substring(pos)
+  const tag = `@[${item.name}](${item.id}) `
+  inputText.value = before + tag + after
+  showMention.value = false
+  nextTick(() => {
+    const newPos = start + tag.length
+    ta.setSelectionRange(newPos, newPos)
+    ta.focus()
+  })
+}
+
+function onInputChange() {
+  autoResize()
+  detectMention()
+}
+
+function onInputKeydown(e: KeyboardEvent) {
+  if (showMention.value && filteredMentionItems.value.length > 0) {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      mentionActiveIndex.value = (mentionActiveIndex.value + 1) % filteredMentionItems.value.length
+      return
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      mentionActiveIndex.value = (mentionActiveIndex.value - 1 + filteredMentionItems.value.length) % filteredMentionItems.value.length
+      return
+    }
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault()
+      selectMention(filteredMentionItems.value[mentionActiveIndex.value])
+      return
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      showMention.value = false
+      return
+    }
+  }
+  // Normal enter handling
+  if (e.key === 'Enter' && !e.shiftKey) {
+    handleSend(e)
+  }
 }
 
 function handleSend(e?: Event) {
@@ -1111,6 +1238,68 @@ watch(() => chatStore.currentSessionId, () => {
   padding: 12px 16px;
   border-top: 1px solid var(--border);
   background: var(--bg-secondary);
+  position: relative;
+}
+
+/* @ Mention Menu */
+.mention-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  right: 16px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+  margin-bottom: 4px;
+  z-index: 50;
+}
+
+.mention-header {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.mention-item:hover, .mention-item.active {
+  background: var(--bg-secondary);
+}
+
+.mention-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.mention-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mention-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .input-row {
