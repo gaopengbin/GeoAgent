@@ -173,6 +173,7 @@ export const useChatStore = defineStore('chat', () => {
         temperature: parseFloat(localStorage.getItem('geoagent_temperature') ?? '0.3'),
         api_key: llmOvr.apiKey || undefined,
         base_url: llmOvr.baseUrl || undefined,
+        locale: i18n.global.locale.value,
       },
       // SSE 事件处理
       (evt: SSEEvent) => {

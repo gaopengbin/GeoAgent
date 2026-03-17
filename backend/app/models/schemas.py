@@ -18,6 +18,7 @@ class ChatOptions(BaseModel):
     enable_report: bool = True
     api_key: Optional[str] = None
     base_url: Optional[str] = None
+    locale: Optional[str] = None
 
 
 class ChatRequest(BaseModel):

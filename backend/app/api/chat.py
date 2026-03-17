@@ -53,11 +53,13 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
     temperature = 0.3
     api_key_override = None
     base_url_override = None
+    locale = "zh-CN"
     if req.options:
         model_override = req.options.model
         temperature = req.options.temperature
         api_key_override = req.options.api_key
         base_url_override = req.options.base_url
+        locale = req.options.locale or "zh-CN"
 
     async def event_stream():
         # SSE: session
@@ -75,6 +77,7 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
                 temperature=temperature,
                 api_key_override=api_key_override,
                 base_url_override=base_url_override,
+                locale=locale,
             ):
                 event_type = event.get("type", "text")
 
