@@ -36,14 +36,6 @@ def get_llm(
     Returns:
         ChatOpenAI 实例（OpenAI 兼容接口）
     """
-    if user_override:
-        return ChatOpenAI(
-            model=user_override,
-            api_key=api_key_override or settings.LLM_API_KEY,
-            base_url=base_url_override or settings.LLM_BASE_URL,
-            temperature=temperature,
-        )
-
     tier_config = {
         "fast": {
             "model": settings.LLM_FAST_MODEL or settings.LLM_MODEL,
@@ -69,9 +61,9 @@ def get_llm(
 
     cfg = tier_config.get(tier, tier_config["main"])
     return ChatOpenAI(
-        model=cfg["model"],
-        api_key=cfg["api_key"],
-        base_url=cfg["base_url"],
+        model=user_override or cfg["model"],
+        api_key=api_key_override or cfg["api_key"],
+        base_url=base_url_override or cfg["base_url"],
         temperature=temperature,
     )
 
