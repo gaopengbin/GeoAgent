@@ -21,6 +21,8 @@ def get_llm(
     tier: str = "main",
     temperature: float = 0.3,
     user_override: Optional[str] = None,
+    api_key_override: Optional[str] = None,
+    base_url_override: Optional[str] = None,
 ) -> ChatOpenAI:
     """根据层级获取 LLM 实例
 
@@ -28,6 +30,8 @@ def get_llm(
         tier: "fast" | "main" | "enhanced" | "reasoning"
         temperature: 采样温度
         user_override: 用户在前端手动选择的模型名，覆盖自动路由
+        api_key_override: 用户在前端配置的 API Key
+        base_url_override: 用户在前端配置的 Base URL
 
     Returns:
         ChatOpenAI 实例（OpenAI 兼容接口）
@@ -35,8 +39,8 @@ def get_llm(
     if user_override:
         return ChatOpenAI(
             model=user_override,
-            api_key=settings.LLM_API_KEY,
-            base_url=settings.LLM_BASE_URL,
+            api_key=api_key_override or settings.LLM_API_KEY,
+            base_url=base_url_override or settings.LLM_BASE_URL,
             temperature=temperature,
         )
 

@@ -241,6 +241,8 @@ async def run_agent_stream(
     history: Optional[list[dict]] = None,
     model_override: Optional[str] = None,
     temperature: float = 0.3,
+    api_key_override: Optional[str] = None,
+    base_url_override: Optional[str] = None,
 ) -> AsyncGenerator[dict, None]:
     """运行 Agent 并以 SSE 事件流形式输出
 
@@ -262,7 +264,7 @@ async def run_agent_stream(
     system_prompt = SYSTEM_PROMPT.format(context_prompt=context_prompt)
 
     # 5. 获取 LLM
-    llm = get_llm(tier="main", temperature=temperature, user_override=model_override)
+    llm = get_llm(tier="main", temperature=temperature, user_override=model_override, api_key_override=api_key_override, base_url_override=base_url_override)
 
     # 6. 构建 Agent（使用当前激活的工具）
     tools = registry.get_active_tools()

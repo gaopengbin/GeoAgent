@@ -5,7 +5,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
-        新对话
+        {{ $t('session.newChat') }}
       </button>
     </div>
     <div class="session-list">
@@ -21,12 +21,12 @@
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
           </svg>
           <span class="session-title" :title="s.title">{{ s.title }}</span>
-          <button class="export-btn" @click.stop="exportSession(s.id, s.title)" title="导出对话">
+          <button class="export-btn" @click.stop="exportSession(s.id, s.title)" :title="$t('session.exportChat')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
             </svg>
           </button>
-          <button class="delete-btn" @click.stop="chatStore.deleteSession(s.id)" title="删除">
+          <button class="delete-btn" @click.stop="chatStore.deleteSession(s.id)" :title="$t('common.delete')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -39,7 +39,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
         </svg>
-        <span>{{ chatStore.sessions.length }} 个对话</span>
+        <span>{{ chatStore.sessions.length }} {{ $t('session.conversations') }}</span>
       </div>
     </div>
   </aside>
@@ -47,8 +47,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useChatStore } from '../stores/chatStore'
 
+const { t } = useI18n()
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 const chatStore = useChatStore()
 
@@ -67,10 +69,10 @@ const groupedSessions = computed(() => {
   const weekAgo = new Date(today.getTime() - 7 * 86400000)
 
   const groups: { label: string; sessions: typeof chatStore.sessions }[] = [
-    { label: '今天', sessions: [] },
-    { label: '昨天', sessions: [] },
-    { label: '最近7天', sessions: [] },
-    { label: '更早', sessions: [] },
+    { label: t('session.today'), sessions: [] },
+    { label: t('session.yesterday'), sessions: [] },
+    { label: t('session.last7Days'), sessions: [] },
+    { label: t('session.older'), sessions: [] },
   ]
 
   for (const s of chatStore.sessions) {

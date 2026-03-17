@@ -3,12 +3,14 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import * as Cesium from 'cesium'
 import App from './App.vue'
+import i18n from './i18n'
 import { useChatStore } from './stores/chatStore'
 import { useConfigStore } from './stores/configStore'
 
 const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
+app.use(i18n)
 app.mount('#app')
 
 // 从后端加载运行时配置 + Cesium Token

@@ -88,7 +88,7 @@ export type SSECallback = (evt: SSEEvent) => void
 export function chatSSE(
   message: string,
   sessionId: string | null,
-  options: { model?: string; temperature?: number } | null,
+  options: { model?: string; temperature?: number; api_key?: string; base_url?: string } | null,
   onEvent: SSECallback,
   onError?: (err: Error) => void,
   onDone?: () => void,

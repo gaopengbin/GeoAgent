@@ -1,7 +1,7 @@
 <template>
   <header class="app-header">
     <div class="header-left">
-      <button class="icon-btn" @click="$emit('toggleSidebar')" title="切换侧边栏">
+      <button class="icon-btn" @click="$emit('toggleSidebar')" :title="$t('header.toggleSidebar')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <line x1="9" y1="3" x2="9" y2="21" />
@@ -44,7 +44,7 @@
     </div>
     <div class="header-right">
       <div ref="settingsRef" class="settings-wrap">
-        <button class="icon-btn" @click="showSettings = !showSettings" title="设置">
+        <button class="icon-btn" @click="showSettings = !showSettings" :title="$t('header.settings')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"/>
             <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
@@ -52,20 +52,44 @@
         </button>
         <transition name="fade">
           <div v-if="showSettings" class="settings-panel">
-            <div class="settings-title">设置</div>
+            <div class="settings-title">{{ $t('header.settings') }}</div>
             <div class="settings-item">
-              <label class="settings-label">温度 (Temperature)</label>
+              <label class="settings-label">{{ $t('header.language') }}</label>
+              <div class="lang-switch">
+                <button class="lang-btn" :class="{ active: locale === 'zh-CN' }" @click="switchLocale('zh-CN')">中文</button>
+                <button class="lang-btn" :class="{ active: locale === 'en' }" @click="switchLocale('en')">EN</button>
+              </div>
+            </div>
+            <div class="settings-item">
+              <label class="settings-label">{{ $t('header.temperature') }}</label>
               <div class="slider-row">
                 <input type="range" min="0" max="100" :value="Math.round(temperature * 100)" @input="onTempChange" class="slider">
                 <span class="slider-val">{{ temperature.toFixed(2) }}</span>
               </div>
-              <span class="settings-hint">较低 = 更精确，较高 = 更创意</span>
+              <span class="settings-hint">{{ $t('header.temperatureHint') }}</span>
             </div>
             <div class="settings-item">
-              <label class="settings-label">高德地图</label>
+              <label class="settings-label">{{ $t('header.amap') }}</label>
               <span class="status-dot" :class="configStore.amapAvailable ? 'on' : 'off'"></span>
-              <span class="settings-hint">{{ configStore.amapAvailable ? '已配置' : '未配置 AMAP_API_KEY' }}</span>
+              <span class="settings-hint">{{ configStore.amapAvailable ? $t('header.amapConfigured') : $t('header.amapNotConfigured') }}</span>
             </div>
+            <div class="settings-divider"></div>
+            <div class="settings-item">
+              <label class="settings-label">{{ $t('header.llmConfig') }}</label>
+            </div>
+            <div class="settings-item">
+              <label class="settings-label-sm">{{ $t('header.apiKey') }}</label>
+              <input v-model="llmApiKey" type="password" class="settings-input" :placeholder="$t('header.apiKeyPlaceholder')">
+            </div>
+            <div class="settings-item">
+              <label class="settings-label-sm">{{ $t('header.baseUrl') }}</label>
+              <input v-model="llmBaseUrl" type="text" class="settings-input" :placeholder="$t('header.baseUrlPlaceholder')">
+            </div>
+            <div class="settings-item">
+              <label class="settings-label-sm">{{ $t('header.modelName') }}</label>
+              <input v-model="llmModelName" type="text" class="settings-input" :placeholder="$t('header.modelNamePlaceholder')">
+            </div>
+            <button class="apply-btn" @click="applyLLMConfig">{{ $t('header.applyConfig') }}</button>
           </div>
         </transition>
       </div>
@@ -75,7 +99,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useConfigStore } from '../stores/configStore'
+
+const { locale } = useI18n()
 
 defineProps<{
   showSidebar: boolean
@@ -87,6 +114,26 @@ const configStore = useConfigStore()
 const showModelMenu = ref(false)
 const showSettings = ref(false)
 const temperature = ref(parseFloat(localStorage.getItem('geoagent_temperature') ?? '0.3'))
+
+const llmApiKey = ref(localStorage.getItem('geoagent_llm_api_key') ?? '')
+const llmBaseUrl = ref(localStorage.getItem('geoagent_llm_base_url') ?? '')
+const llmModelName = ref(localStorage.getItem('geoagent_llm_model') ?? '')
+
+function switchLocale(lang: string) {
+  locale.value = lang
+  localStorage.setItem('locale', lang)
+}
+
+function applyLLMConfig() {
+  if (llmApiKey.value) localStorage.setItem('geoagent_llm_api_key', llmApiKey.value)
+  if (llmBaseUrl.value) localStorage.setItem('geoagent_llm_base_url', llmBaseUrl.value)
+  if (llmModelName.value) localStorage.setItem('geoagent_llm_model', llmModelName.value)
+  configStore.llmOverride = {
+    apiKey: llmApiKey.value || undefined,
+    baseUrl: llmBaseUrl.value || undefined,
+    model: llmModelName.value || undefined,
+  }
+}
 
 function onTempChange(e: Event) {
   const val = parseInt((e.target as HTMLInputElement).value) / 100
@@ -342,6 +389,76 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
 
 .status-dot.off {
   background: var(--text-muted);
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+.lang-switch {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.lang-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.settings-label-sm {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.settings-input:focus {
+  border-color: var(--accent);
+}
+
+.apply-btn {
+  width: 100%;
+  padding: 5px 0;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.apply-btn:hover {
+  opacity: 0.85;
 }
 
 .fade-enter-active, .fade-leave-active {

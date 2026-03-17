@@ -19,22 +19,22 @@
         <div v-if="hasResults" class="stats-row">
           <div class="stat-card">
             <span class="stat-value">{{ stats.total }}</span>
-            <span class="stat-label">工具调用</span>
+            <span class="stat-label">{{ $t('result.toolCalls') }}</span>
           </div>
           <div class="stat-card">
             <span class="stat-value success">{{ stats.success }}</span>
-            <span class="stat-label">成功</span>
+            <span class="stat-label">{{ $t('common.success') }}</span>
           </div>
           <div class="stat-card">
             <span class="stat-value">{{ stats.totalFeatures }}</span>
-            <span class="stat-label">数据要素</span>
+            <span class="stat-label">{{ $t('result.dataFeatures') }}</span>
           </div>
         </div>
 
         <!-- 数据量条形图 -->
         <div v-if="resultBars.length" style="margin-top: 16px;">
           <div class="chart-header">
-            <span class="chart-title">数据量分布</span>
+            <span class="chart-title">{{ $t('result.dataDistribution') }}</span>
           </div>
           <div class="mock-chart">
             <div v-for="(bar, i) in resultBars" :key="i" class="bar-item">
@@ -50,7 +50,7 @@
         <!-- ECharts 图表 -->
         <div v-if="resultStore.chartOptions.length" class="echarts-section">
           <div class="chart-header">
-            <span class="chart-title">图表</span>
+            <span class="chart-title">{{ $t('result.chart') }}</span>
             <span class="chart-count">{{ resultStore.chartOptions.length }}</span>
           </div>
           <div class="echarts-row">
@@ -68,7 +68,7 @@
         <!-- 执行记录 -->
         <div v-if="hasResults" style="margin-top: 16px;">
           <div class="chart-header">
-            <span class="chart-title">执行记录</span>
+            <span class="chart-title">{{ $t('result.executionLog') }}</span>
           </div>
           <div class="result-list">
             <div v-for="r in resultStore.latestResults" :key="r.timestamp" class="result-item" :class="{ error: !r.success }">
@@ -90,8 +90,8 @@
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
             <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
-          <span>暂无分析结果</span>
-          <span class="hint">通过对话发起分析任务</span>
+          <span>{{ $t('result.noResults') }}</span>
+          <span class="hint">{{ $t('result.noResultsHint') }}</span>
         </div>
       </div>
 
@@ -106,17 +106,17 @@
             </label>
             <div class="layer-meta">
               <span class="layer-type-badge">{{ layer.type }}</span>
-              <button v-if="layer.type === '轨迹'" class="sm-btn" :class="{ active: trajectoryPlaying[layer.id] }" @click="toggleTrajectoryPlay(layer)" :title="trajectoryPlaying[layer.id] ? '暂停' : '播放'">
+              <button v-if="layer.type === $t('result.trajectory')" class="sm-btn" :class="{ active: trajectoryPlaying[layer.id] }" @click="toggleTrajectoryPlay(layer)" :title="trajectoryPlaying[layer.id] ? $t('result.pause') : $t('result.play')">
                 <svg v-if="trajectoryPlaying[layer.id]" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                 <svg v-else width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
               </button>
-              <button class="sm-btn" @click="mapStore.zoomToLayer(layer.id)" title="缩放到">
+              <button class="sm-btn" @click="mapStore.zoomToLayer(layer.id)" :title="$t('map.zoomTo')">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
-              <button v-if="layer.dataRefId" class="sm-btn" @click="exportLayerData(layer.dataRefId!, 'geojson')" title="导出 GeoJSON">
+              <button v-if="layer.dataRefId" class="sm-btn" @click="exportLayerData(layer.dataRefId!, 'geojson')" :title="$t('result.exportGeoJSON')">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
               </button>
-              <button class="sm-btn danger" @click="mapStore.removeLayer(layer.id)" title="删除">
+              <button class="sm-btn danger" @click="mapStore.removeLayer(layer.id)" :title="$t('common.delete')">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
@@ -126,8 +126,8 @@
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
-          <span>暂无图层</span>
-          <span class="hint">通过对话添加数据图层</span>
+          <span>{{ $t('result.noLayers') }}</span>
+          <span class="hint">{{ $t('result.noLayersHint') }}</span>
         </div>
       </div>
 
@@ -138,27 +138,27 @@
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
           </svg>
-          <span>暂无报告</span>
-          <span class="hint">分析完成后可生成报告</span>
+          <span>{{ $t('result.noReport') }}</span>
+          <span class="hint">{{ $t('result.noReportHint') }}</span>
         </div>
         <div v-if="reportHtml" class="report-actions">
           <button class="action-btn primary" @click="resultStore.showReportModal = true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
             </svg>
-            预览完整版
+            {{ $t('result.previewFull') }}
           </button>
           <button class="action-btn" @click="copyReport">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
             </svg>
-            复制
+            {{ $t('common.copy') }}
           </button>
           <button class="action-btn" @click="downloadReport">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
-            下载
+            {{ $t('common.download') }}
           </button>
         </div>
       </div>
@@ -169,19 +169,19 @@
       <div v-if="resultStore.showReportModal" class="report-modal-overlay" @click.self="resultStore.showReportModal = false">
         <div class="report-modal">
           <div class="report-modal-header">
-            <span class="report-modal-title">分析报告</span>
+            <span class="report-modal-title">{{ $t('result.analysisReport') }}</span>
             <div class="report-modal-actions">
-              <button class="action-btn" @click="copyReport" title="复制">
+              <button class="action-btn" @click="copyReport" :title="$t('common.copy')">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                 </svg>
-                复制
+                {{ $t('common.copy') }}
               </button>
-              <button class="action-btn" @click="downloadReport" title="下载">
+              <button class="action-btn" @click="downloadReport" :title="$t('common.download')">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                下载 Markdown
+                {{ $t('result.downloadMarkdown') }}
               </button>
               <button class="report-modal-close" @click="resultStore.showReportModal = false">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -199,11 +199,13 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import * as echarts from 'echarts'
 import MarkdownIt from 'markdown-it'
 import { useResultStore } from '../stores/resultStore'
 import { useMapStore } from '../stores/mapStore'
 
+const { t } = useI18n()
 const md = new MarkdownIt()
 const resultStore = useResultStore()
 const mapStore = useMapStore()
@@ -283,23 +285,23 @@ onBeforeUnmount(() => {
   chartRefs.length = 0
 })
 
-const tabs = [
+const tabs = computed(() => [
   {
     id: 'chart',
-    label: '结果',
+    label: t('result.results'),
     icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
   },
   {
     id: 'table',
-    label: '图层',
+    label: t('result.layers'),
     icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>'
   },
   {
     id: 'report',
-    label: '报告',
+    label: t('result.report'),
     icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
   },
-]
+])
 
 // 工具结果条形图数据
 const resultBars = computed(() => {
@@ -338,7 +340,7 @@ function toggleTrajectoryPlay(layer: any) {
 // 轨迹图层添加时默认标记为播放中
 watch(layerList, (layers) => {
   for (const l of layers) {
-    if (l.type === '轨迹' && !(l.id in trajectoryPlaying.value)) {
+    if (l.type === t('result.trajectory') && !(l.id in trajectoryPlaying.value)) {
       trajectoryPlaying.value[l.id] = true
     }
   }
@@ -351,10 +353,10 @@ const reportHtml = computed(() => {
   }
   // 无报告时自动生成简要汇总
   if (!resultStore.toolResults.length) return ''
-  const lines = ['## 分析汇总\n']
-  lines.push(`- **工具调用**: ${stats.value.total} 次（成功 ${stats.value.success}，失败 ${stats.value.failed}）`)
-  lines.push(`- **数据要素**: 共 ${stats.value.totalFeatures} 个`)
-  lines.push('\n### 执行记录\n')
+  const lines = [`## ${t('result.analysisSummary')}\n`]
+  lines.push(`- **${t('result.toolCalls')}**: ${stats.value.total} (${t('common.success')} ${stats.value.success}, ${t('common.failed')} ${stats.value.failed})`)
+  lines.push(`- **${t('result.dataFeatures')}**: ${stats.value.totalFeatures}`)
+  lines.push(`\n### ${t('result.executionLog')}\n`)
   resultStore.latestResults.forEach((r, i) => {
     const icon = r.success ? '✅' : '❌'
     lines.push(`${i + 1}. ${icon} **${r.toolName}** — ${r.summary}`)
@@ -376,7 +378,7 @@ async function exportLayerData(refId: string, format: 'geojson' | 'csv') {
   try {
     const url = `${API_BASE}/data/${refId}/export?format=${format}`
     const resp = await fetch(url)
-    if (!resp.ok) throw new Error(`导出失败: ${resp.status}`)
+    if (!resp.ok) throw new Error(`${t('result.exportFailed')}: ${resp.status}`)
     const blob = await resp.blob()
     const blobUrl = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -386,7 +388,7 @@ async function exportLayerData(refId: string, format: 'geojson' | 'csv') {
     URL.revokeObjectURL(blobUrl)
   } catch (e) {
     console.error('[exportLayerData]', e)
-    alert(`导出失败: ${e}`)
+    alert(`${t('result.exportFailed')}: ${e}`)
   }
 }
 

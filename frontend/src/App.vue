@@ -17,10 +17,10 @@
           v-if="!showBottomPanel"
           class="bottom-panel-toggle"
           @click="showBottomPanel = true"
-          title="打开分析面板"
+          :title="$t('app.openAnalysis')"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
-          <span>分析结果</span>
+          <span>{{ $t('app.analysisResult') }}</span>
         </button>
         <!-- 底部结果面板 -->
         <div
@@ -32,7 +32,7 @@
             <div class="handle-grip"></div>
           </div>
           <div class="bottom-header">
-            <span class="bottom-title">分析结果</span>
+            <span class="bottom-title">{{ $t('app.analysisResult') }}</span>
             <button class="bottom-close" @click="showBottomPanel = false">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="6 9 12 15 18 9"/>
@@ -55,11 +55,11 @@
     <div v-if="isMobile" class="mobile-nav">
       <button :class="{ active: mobileView === 'map' }" @click="mobileView = 'map'">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2c2.5 3 4 6.5 4 10s-1.5 7-4 10c-2.5-3-4-6.5-4-10s1.5-7 4-10z"/></svg>
-        <span>地图</span>
+        <span>{{ $t('app.map') }}</span>
       </button>
       <button :class="{ active: mobileView === 'chat' }" @click="mobileView = 'chat'">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        <span>对话</span>
+        <span>{{ $t('app.chat') }}</span>
       </button>
     </div>
   </div>

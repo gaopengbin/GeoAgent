@@ -51,9 +51,13 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
     # 提取用户选项
     model_override = None
     temperature = 0.3
+    api_key_override = None
+    base_url_override = None
     if req.options:
         model_override = req.options.model
         temperature = req.options.temperature
+        api_key_override = req.options.api_key
+        base_url_override = req.options.base_url
 
     async def event_stream():
         # SSE: session
@@ -69,6 +73,8 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
                 history=history,
                 model_override=model_override,
                 temperature=temperature,
+                api_key_override=api_key_override,
+                base_url_override=base_url_override,
             ):
                 event_type = event.get("type", "text")
 

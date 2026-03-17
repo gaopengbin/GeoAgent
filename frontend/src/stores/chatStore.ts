@@ -3,6 +3,7 @@ import { ref, computed, shallowRef } from 'vue'
 import { chatSSE, apiGet, apiDelete, type SSEEvent } from '../api/client'
 import { useResultStore } from './resultStore'
 import { useConfigStore } from './configStore'
+import i18n from '../i18n'
 
 export interface ToolCall {
   name: string
@@ -60,7 +61,7 @@ export const useChatStore = defineStore('chat', () => {
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
     const session: Session = {
       id,
-      title: '新对话',
+      title: i18n.global.t('chat.newChat'),
       messages: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -85,7 +86,7 @@ export const useChatStore = defineStore('chat', () => {
   function _cleanEmptySession(oldId: string | null) {
     if (!oldId) return
     const s = sessions.value.find(x => x.id === oldId)
-    if (s && s.messages.length === 0 && s.title === '新对话') {
+    if (s && s.messages.length === 0 && s.title === i18n.global.t('chat.newChat')) {
       sessions.value = sessions.value.filter(x => x.id !== oldId)
     }
   }
@@ -113,7 +114,7 @@ export const useChatStore = defineStore('chat', () => {
     session.updatedAt = new Date().toISOString()
 
     // 自动更新标题
-    if (msg.role === 'user' && session.title === '新对话') {
+    if (msg.role === 'user' && session.title === i18n.global.t('chat.newChat')) {
       session.title = msg.content.slice(0, 20) + (msg.content.length > 20 ? '...' : '')
     }
 
@@ -163,12 +164,15 @@ export const useChatStore = defineStore('chat', () => {
     const sessionId = currentSessionId.value || null
 
     const configStore = useConfigStore()
+    const llmOvr = configStore.llmOverride
     const ctrl = chatSSE(
       text,
       sessionId,
       {
-        model: configStore.selectedModel || undefined,
+        model: llmOvr.model || configStore.selectedModel || undefined,
         temperature: parseFloat(localStorage.getItem('geoagent_temperature') ?? '0.3'),
+        api_key: llmOvr.apiKey || undefined,
+        base_url: llmOvr.baseUrl || undefined,
       },
       // SSE 事件处理
       (evt: SSEEvent) => {
@@ -214,7 +218,7 @@ export const useChatStore = defineStore('chat', () => {
               name: evt.data.tool_name,
               args: evt.data.tool_args,
               status: 'running',
-              statusText: evt.data.description ?? `正在执行 ${evt.data.tool_name}...`,
+              statusText: evt.data.description ?? `${i18n.global.t('chat.executing')} ${evt.data.tool_name}...`,
             }
             if (!aiMsg.toolCalls) aiMsg.toolCalls = []
             aiMsg.toolCalls.push(tc)
@@ -228,7 +232,7 @@ export const useChatStore = defineStore('chat', () => {
               )
               if (tc) {
                 tc.status = evt.data.success ? 'done' : 'error'
-                tc.statusText = evt.data.summary ?? (evt.data.success ? '完成' : '失败')
+                tc.statusText = evt.data.summary ?? (evt.data.success ? i18n.global.t('chat.done') : i18n.global.t('common.failed'))
                 tc.dataRefId = evt.data.data_ref_id ?? null
                 tc.result = evt.data.result ?? null
               }
@@ -269,7 +273,7 @@ export const useChatStore = defineStore('chat', () => {
             resultStore.addChartOption({
               option: chart.option,
               chartType: chart.chart_type ?? 'bar',
-              title: chart.title ?? '图表',
+              title: chart.title ?? i18n.global.t('result.chart'),
               timestamp: Date.now(),
             })
             break
@@ -285,7 +289,7 @@ export const useChatStore = defineStore('chat', () => {
           }
 
           case 'error': {
-            aiMsg.content += `\n\n⚠️ 错误：${evt.data.message ?? '未知错误'}`
+            aiMsg.content += `\n\n⚠️ ${i18n.global.t('common.error')}: ${evt.data.message ?? i18n.global.t('common.unknownError')}`
             break
           }
 
@@ -300,7 +304,7 @@ export const useChatStore = defineStore('chat', () => {
       },
       // 网络错误
       (err: Error) => {
-        aiMsg.content += `\n\n⚠️ 网络错误：${err.message}`
+        aiMsg.content += `\n\n⚠️ ${i18n.global.t('chat.networkError')}: ${err.message}`
         isStreaming.value = false
         abortController.value = null
       },

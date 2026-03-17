@@ -19,7 +19,7 @@
     <transition name="slide-panel">
       <div v-if="showLayerPanel" class="layer-panel">
         <div class="panel-header">
-          <span>图层管理</span>
+          <span>{{ $t('map.layerManagement') }}</span>
           <button class="close-btn" @click="showLayerPanel = false">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -35,10 +35,10 @@
             </label>
             <div class="layer-actions">
               <span class="layer-type">{{ layer.type }}</span>
-              <button class="layer-action-btn" title="缩放到" @click="mapStore.zoomToLayer(layer.id)">
+              <button class="layer-action-btn" :title="$t('map.zoomTo')" @click="mapStore.zoomToLayer(layer.id)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
-              <button class="layer-action-btn delete" title="删除" @click="mapStore.removeLayer(layer.id)">
+              <button class="layer-action-btn delete" :title="$t('common.delete')" @click="mapStore.removeLayer(layer.id)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
@@ -47,8 +47,8 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
-            <span>暂无图层</span>
-            <span class="hint">通过对话添加数据图层</span>
+            <span>{{ $t('map.noLayers') }}</span>
+            <span class="hint">{{ $t('map.noLayersHint') }}</span>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
     <transition name="slide-panel">
       <div v-if="showMeasurePanel" class="measure-panel">
         <div class="panel-header">
-          <span>{{ measureMode === 'distance' ? '距离测量' : '面积测量' }}</span>
+          <span>{{ measureMode === 'distance' ? $t('map.distanceMeasure') : $t('map.areaMeasure') }}</span>
           <button class="close-btn" @click="stopMeasure">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -67,13 +67,13 @@
         </div>
         <div class="measure-body">
           <div class="measure-modes">
-            <button :class="{ active: measureMode === 'distance' }" @click="startMeasure('distance')">距离</button>
-            <button :class="{ active: measureMode === 'area' }" @click="startMeasure('area')">面积</button>
+            <button :class="{ active: measureMode === 'distance' }" @click="startMeasure('distance')">{{ $t('map.distance') }}</button>
+            <button :class="{ active: measureMode === 'area' }" @click="startMeasure('area')">{{ $t('map.area') }}</button>
           </div>
           <div v-if="measureResult" class="measure-result">
             <span class="measure-value">{{ measureResult }}</span>
           </div>
-          <div class="measure-hint">左键点击添加点，右键结束</div>
+          <div class="measure-hint">{{ $t('map.measureHint') }}</div>
         </div>
       </div>
     </transition>
@@ -82,7 +82,7 @@
     <transition name="slide-panel">
       <div v-if="showDrawPanel" class="draw-panel">
         <div class="panel-header">
-          <span>绘制工具</span>
+          <span>{{ $t('map.drawTool') }}</span>
           <button class="close-btn" @click="stopDraw">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -91,18 +91,18 @@
         </div>
         <div class="measure-body">
           <div class="measure-modes">
-            <button :class="{ active: drawMode === 'point' }" @click="startDraw('point')">点</button>
-            <button :class="{ active: drawMode === 'line' }" @click="startDraw('line')">线</button>
-            <button :class="{ active: drawMode === 'polygon' }" @click="startDraw('polygon')">面</button>
+            <button :class="{ active: drawMode === 'point' }" @click="startDraw('point')">{{ $t('map.point') }}</button>
+            <button :class="{ active: drawMode === 'line' }" @click="startDraw('line')">{{ $t('map.line') }}</button>
+            <button :class="{ active: drawMode === 'polygon' }" @click="startDraw('polygon')">{{ $t('map.polygon') }}</button>
           </div>
           <div v-if="drawPointCount > 0" class="measure-result">
-            <span class="measure-value">已绘制 {{ drawPointCount }} 个点</span>
+            <span class="measure-value">{{ $t('map.drawnPoints', { count: drawPointCount }) }}</span>
           </div>
           <div class="draw-actions" v-if="drawPointCount > 0">
-            <button class="draw-action-btn" @click="finishDraw">完成绘制</button>
-            <button class="draw-action-btn secondary" @click="clearDraw">清除</button>
+            <button class="draw-action-btn" @click="finishDraw">{{ $t('map.finishDraw') }}</button>
+            <button class="draw-action-btn secondary" @click="clearDraw">{{ $t('map.clear') }}</button>
           </div>
-          <div class="measure-hint">左键点击添加点，右键或点“完成绘制”结束</div>
+          <div class="measure-hint">{{ $t('map.drawHint') }}</div>
         </div>
       </div>
     </transition>
@@ -128,13 +128,14 @@
     <div class="coord-display">
       <span>{{ lng.toFixed(4) }}°E, {{ lat.toFixed(4) }}°N</span>
       <span class="separator">|</span>
-      <span>缩放: {{ zoom }}</span>
+      <span>{{ $t('map.zoom') }} {{ zoom }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMapStore } from '../stores/mapStore'
 import { useChatStore } from '../stores/chatStore'
 import { useConfigStore } from '../stores/configStore'
@@ -142,6 +143,7 @@ import { useResultStore } from '../stores/resultStore'
 import { apiPost } from '../api/client'
 import * as Cesium from 'cesium'
 
+const { t } = useI18n()
 const mapStore = useMapStore()
 const chatStore = useChatStore()
 const configStore = useConfigStore()
@@ -187,34 +189,34 @@ let _drawEntities: Cesium.Entity[] = []
 
 const currentBasemap = computed(() => mapStore.currentBasemap)
 
-const tools = [
+const tools = computed(() => [
   {
     id: 'layers',
-    label: '图层',
+    label: t('map.layers'),
     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>'
   },
   {
     id: 'measure',
-    label: '测量',
+    label: t('map.measure'),
     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 2L22 22M5.5 5.5l2-2M9 9l2-2M12.5 12.5l2-2M16 16l2-2"/></svg>'
   },
   {
     id: 'draw',
-    label: '绘制',
+    label: t('map.draw'),
     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>'
   },
   {
     id: 'screenshot',
-    label: '截图',
+    label: t('map.screenshot'),
     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'
   },
-]
+])
 
-const defaultBasemaps = [
-  { id: 'dark', label: '暗色', color: '#1a1a2e' },
-  { id: 'satellite', label: '卫星', color: '#2d5a27' },
-  { id: 'standard', label: '标准', color: '#e8e4d8' },
-]
+const defaultBasemaps = computed(() => [
+  { id: 'dark', label: t('map.dark'), color: '#1a1a2e' },
+  { id: 'satellite', label: t('map.satellite'), color: '#2d5a27' },
+  { id: 'standard', label: t('map.standard'), color: '#e8e4d8' },
+])
 
 const basemaps = computed(() => {
   if (configStore.availableBasemaps.length) {
@@ -224,7 +226,7 @@ const basemaps = computed(() => {
       color: b.color ?? '#666',
     }))
   }
-  return defaultBasemaps
+  return defaultBasemaps.value
 })
 
 function switchBasemap(id: string) {
@@ -550,7 +552,7 @@ async function finishDraw() {
   const geojson = drawToGeoJSON(mode, _drawPoints)
   if (!geojson) return
 
-  const typeLabel = mode === 'point' ? '点' : mode === 'line' ? '线' : '面'
+  const typeLabel = mode === 'point' ? t('map.point') : mode === 'line' ? t('map.line') : t('map.polygon')
   const sessionId = chatStore.currentSessionId
 
   if (sessionId) {
@@ -560,16 +562,19 @@ async function finishDraw() {
         { session_id: sessionId, geojson, source: `draw:${mode}` },
       )
       chatStore.sendMessage(
-        `我在地图上绘制了${_drawPoints.length}个${typeLabel}，已注册为 data_ref_id="${res.data_ref_id}"（${res.feature_count}个${res.geometry_type}要素）。请在地图上展示并分析。`,
+        t(mode === 'point' ? 'map.drewPoint' : mode === 'line' ? 'map.drewLine' : 'map.drewPolygon') +
+        `, data_ref_id="${res.data_ref_id}" (${res.feature_count} ${res.geometry_type})`,
       )
     } catch {
       chatStore.sendMessage(
-        `我在地图上绘制了${_drawPoints.length}个${typeLabel}，请分析。\n\n\`\`\`json\n${JSON.stringify(geojson)}\n\`\`\``,
+        t(mode === 'point' ? 'map.drewPoint' : mode === 'line' ? 'map.drewLine' : 'map.drewPolygon') +
+        `\n\n\`\`\`json\n${JSON.stringify(geojson)}\n\`\`\``,
       )
     }
   } else {
     chatStore.sendMessage(
-      `我在地图上绘制了${_drawPoints.length}个${typeLabel}，请分析。\n\n\`\`\`json\n${JSON.stringify(geojson)}\n\`\`\``,
+      t(mode === 'point' ? 'map.drewPoint' : mode === 'line' ? 'map.drewLine' : 'map.drewPolygon') +
+      `\n\n\`\`\`json\n${JSON.stringify(geojson)}\n\`\`\``,
     )
   }
 }

@@ -25,6 +25,7 @@ export const useConfigStore = defineStore('config', () => {
   const amapAvailable = ref(false)
   const cesiumRuntimeWsUrl = ref('')
   const loaded = ref(false)
+  const llmOverride = ref<{ apiKey?: string; baseUrl?: string; model?: string }>({})
 
   async function loadConfig() {
     if (loaded.value) return
@@ -67,6 +68,7 @@ export const useConfigStore = defineStore('config', () => {
     amapAvailable,
     cesiumRuntimeWsUrl,
     loaded,
+    llmOverride,
     loadConfig,
   }
 })

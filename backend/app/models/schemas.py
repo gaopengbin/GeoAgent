@@ -16,6 +16,8 @@ class ChatOptions(BaseModel):
     temperature: float = 0.3
     max_tools: int = 10
     enable_report: bool = True
+    api_key: Optional[str] = None
+    base_url: Optional[str] = None
 
 
 class ChatRequest(BaseModel):

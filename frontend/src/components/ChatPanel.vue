@@ -4,7 +4,7 @@
       <div v-if="isDragging" class="drop-overlay">
         <div class="drop-hint">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-          <span>拖放文件到此处上传</span>
+          <span>{{ $t('chat.dropToUpload') }}</span>
         </div>
       </div>
     </transition>
@@ -17,8 +17,8 @@
             <path d="M2 12h20" stroke="var(--accent)" stroke-width="1.5"/>
           </svg>
         </div>
-        <h3>与你的地图对话</h3>
-        <p>描述你想要分析的地理空间问题，GeoAgent 会帮你完成</p>
+        <h3>{{ $t('chat.welcome') }}</h3>
+        <p>{{ $t('chat.welcomeDesc') }}</p>
         <div class="quick-actions">
           <button v-for="q in quickActions" :key="q" class="quick-btn" @click="handleQuickAction(q)">
             {{ q }}
@@ -30,7 +30,7 @@
         <!-- 用户消息 -->
         <div v-if="msg.role === 'user'" class="message user-message">
           <div class="user-msg-row">
-            <button v-if="!isStreaming" class="resend-btn" @click="startResend(i, msg.content)" title="编辑并重发">
+            <button v-if="!isStreaming" class="resend-btn" @click="startResend(i, msg.content)" :title="$t('chat.editResend')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
             <div class="message-content user-bubble">{{ msg.content }}</div>
@@ -60,7 +60,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                 </svg>
-                <span>思考过程</span>
+                <span>{{ $t('chat.thinking') }}</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   :style="{ transform: msg._showThinking ? 'rotate(180deg)' : '' }">
                   <polyline points="6 9 12 15 18 9"/>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="tool-status-row">
                   <div class="tool-status-text">{{ tc.statusText }}</div>
-                  <button v-if="tc.status !== 'running'" class="detail-btn" @click.stop="showToolDetail(tc)" title="查看详情">
+                  <button v-if="tc.status !== 'running'" class="detail-btn" @click.stop="showToolDetail(tc)" :title="$t('chat.viewDetail')">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   </button>
                 </div>
@@ -93,11 +93,11 @@
                 <div v-if="tc.name === 'generate_report' && tc.status === 'done'" class="report-inline-actions">
                   <button class="report-inline-btn primary" @click.stop="previewReport(tc.result)">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                    预览完整报告
+                    {{ $t('chat.previewReport') }}
                   </button>
                   <button class="report-inline-btn" @click.stop="downloadReport(tc.result?.content)">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    下载
+                    {{ $t('common.download') }}
                   </button>
                 </div>
                 <transition name="expand">
@@ -125,7 +125,7 @@
 
             <!-- 消息操作栏 -->
             <div v-if="msg.content && !isStreaming" class="msg-actions">
-              <button class="msg-action-btn" title="复制" @click="copyMessage(msg.content)">
+              <button class="msg-action-btn" :title="$t('common.copy')" @click="copyMessage(msg.content)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                 </svg>
@@ -152,7 +152,7 @@
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-row">
-        <button class="attach-btn" :class="{ uploading: uploadProgress > 0 }" title="上传文件" @click="triggerFileInput">
+        <button class="attach-btn" :class="{ uploading: uploadProgress > 0 }" :title="$t('chat.uploadFile')" @click="triggerFileInput">
           <svg v-if="!uploadProgress" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
           </svg>
@@ -169,7 +169,7 @@
           ref="inputRef"
           v-model="inputText"
           class="chat-input"
-          placeholder="描述你的地理空间分析需求..."
+          :placeholder="$t('chat.inputPlaceholder')"
           rows="1"
           @keydown.enter.exact="handleSend"
           @input="autoResize"
@@ -196,7 +196,7 @@
           </svg>
         </button>
       </div>
-      <div class="input-hint">Enter 发送 · Shift+Enter 换行 · Ctrl+K 新对话 · 支持拖拽上传</div>
+      <div class="input-hint">{{ $t('chat.sendHint') }}</div>
     </div>
 
     <!-- 工具详情弹窗 -->
@@ -206,18 +206,18 @@
           <div class="tool-detail-modal">
             <div class="tool-detail-header">
               <span class="tool-detail-title">{{ toolDetailData?.name }}</span>
-              <span class="tool-detail-badge" :class="toolDetailData?.status">{{ toolDetailData?.status === 'done' ? '成功' : '失败' }}</span>
+              <span class="tool-detail-badge" :class="toolDetailData?.status">{{ toolDetailData?.status === 'done' ? $t('chat.done') : $t('common.failed') }}</span>
               <button class="tool-detail-close" @click="toolDetailVisible = false">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
             <div class="tool-detail-body">
               <div class="tool-detail-section">
-                <div class="tool-detail-section-title">输入参数</div>
+                <div class="tool-detail-section-title">{{ $t('chat.inputParams') }}</div>
                 <pre class="tool-detail-json">{{ formatJson(toolDetailData?.args) }}</pre>
               </div>
               <div class="tool-detail-section">
-                <div class="tool-detail-section-title">输出结果</div>
+                <div class="tool-detail-section-title">{{ $t('chat.outputResult') }}</div>
                 <pre class="tool-detail-json">{{ formatJson(toolDetailData?.result) }}</pre>
               </div>
             </div>
@@ -230,11 +230,13 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, watch, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useChatStore } from '../stores/chatStore'
 import { useResultStore } from '../stores/resultStore'
 import { apiUpload } from '../api/client'
 import MarkdownIt from 'markdown-it'
 
+const { t } = useI18n()
 const chatStore = useChatStore()
 const resultStore = useResultStore()
 const md = new MarkdownIt({ html: false, linkify: true })
@@ -242,7 +244,7 @@ const md = new MarkdownIt({ html: false, linkify: true })
 const defaultFence = md.renderer.rules.fence!
 md.renderer.rules.fence = (tokens, idx, options, env, self) => {
   const raw = defaultFence(tokens, idx, options, env, self)
-  return `<div class="code-block-wrapper"><button class="copy-code-btn" title="复制">` +
+  return `<div class="code-block-wrapper"><button class="copy-code-btn" title="Copy">` +
     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">` +
     `<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>` +
     `</button>${raw}</div>`
@@ -265,7 +267,7 @@ function showToolDetail(tc: any) {
 }
 
 function formatJson(data: any): string {
-  if (!data) return '(无数据)'
+  if (!data) return t('common.noData')
   try { return JSON.stringify(data, null, 2) } catch { return String(data) }
 }
 
@@ -316,12 +318,12 @@ function copyMessage(content: string) {
 const currentMessages = computed(() => chatStore.currentMessages)
 const isStreaming = computed(() => chatStore.isStreaming)
 
-const quickActions = [
-  '飞到北京天安门',
-  '搜索天安门周边1公里内的餐厅',
-  '从北京到上海的驾车路线规划',
-  '查询今天北京的天气',
-]
+const quickActions = computed(() => [
+  t('chat.quickFlyTo'),
+  t('chat.quickPOI'),
+  t('chat.quickRoute'),
+  t('chat.quickWeather'),
+])
 
 function renderMarkdown(text: string) {
   return md.render(text)
@@ -404,23 +406,23 @@ async function uploadFile(file: File) {
       (pct) => { uploadProgress.value = pct },
     )
     uploadProgress.value = 0
-    const lines = [`📎 文件已上传：**${result.filename}**`]
+    const lines = [`📎 ${t('chat.fileUploaded')}：**${result.filename}**`]
     if (result.data_ref_id) {
-      lines.push(`- 数据引用: \`${result.data_ref_id}\``)
+      lines.push(`- ${t('chat.dataRef')}: \`${result.data_ref_id}\``)
       lines.push(`- 要素数: ${result.feature_count}　类型: ${result.geometry_type ?? '未知'}　坐标系: ${result.crs}`)
       lines.push('')
-      lines.push('数据已自动解析并注册，AI 可直接使用。请输入你的指令。')
+      lines.push(t('chat.dataAutoRegistered'))
     } else {
       lines.push(`- file_id: \`${result.file_id}\``)
       lines.push('')
-      lines.push('文件已保存但未能自动解析，请尝试让 AI 加载此文件。')
+      lines.push(t('chat.dataManualLoad'))
     }
     chatStore.addSystemMessage(lines.join('\n'))
     scrollToBottom()
   } catch (err: any) {
     uploadProgress.value = 0
-    console.error('文件上传失败:', err)
-    chatStore.addSystemMessage(`文件上传失败: ${err.message}`)
+    console.error('Upload failed:', err)
+    chatStore.addSystemMessage(`${t('chat.uploadFailed')}: ${err.message}`)
   }
 }
 
