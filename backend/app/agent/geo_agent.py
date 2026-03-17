@@ -216,7 +216,7 @@ async def run_agent_stream(
                     "step": step_counter,
                     "tool_name": tool_name,
                     "tool_args": tool_input,
-                    "description": f"正在执行 {tool_name}...",
+                    "description": f"Executing {tool_name}..." if locale == "en" else f"正在执行 {tool_name}...",
                 }
 
             # 工具调用完成
@@ -239,7 +239,11 @@ async def run_agent_stream(
                             if isinstance(raw, dict) and "features" in raw:
                                 sample = [f.get("properties", {}) for f in raw["features"][:5]]
                                 result_detail["sample_data"] = sample
-                                result_detail["sample_note"] = f"前{len(sample)}条（共{len(raw['features'])}条）"
+                                result_detail["sample_note"] = (
+                                    f"First {len(sample)} of {len(raw['features'])} features"
+                                    if locale == "en"
+                                    else f"前{len(sample)}条（共{len(raw['features'])}条）"
+                                )
                         except Exception:
                             pass
                 else:
@@ -286,25 +290,34 @@ async def run_agent_stream(
     except Exception as e:
         error_msg = str(e)
         logger.error("Agent 流式执行异常: %s", error_msg)
+        is_en = locale == "en"
         if "429" in error_msg or "rate" in error_msg.lower() or "limit" in error_msg.lower():
             yield {
                 "type": "error",
-                "message": "模型调用频率超限，请稍后重试。如频繁出现，可在设置中切换其他模型。",
+                "message": "Model rate limit exceeded. Please retry later or switch to another model in settings."
+                if is_en
+                else "模型调用频率超限，请稍后重试。如频繁出现，可在设置中切换其他模型。",
             }
         elif "401" in error_msg or "auth" in error_msg.lower():
             yield {
                 "type": "error",
-                "message": "模型 API Key 无效或已过期，请检查后端 .env 配置。",
+                "message": "Invalid or expired API Key. Please check your .env configuration."
+                if is_en
+                else "模型 API Key 无效或已过期，请检查后端 .env 配置。",
             }
         elif "timeout" in error_msg.lower():
             yield {
                 "type": "error",
-                "message": "模型响应超时，请稍后重试或尝试简化问题。",
+                "message": "Model response timed out. Please retry or simplify your question."
+                if is_en
+                else "模型响应超时，请稍后重试或尝试简化问题。",
             }
         else:
             yield {
                 "type": "error",
-                "message": f"AI 处理异常：{error_msg[:200]}",
+                "message": f"AI error: {error_msg[:200]}"
+                if is_en
+                else f"AI 处理异常：{error_msg[:200]}",
             }
 
     # 最终 done 事件

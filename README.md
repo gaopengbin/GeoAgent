@@ -1,5 +1,7 @@
 # GeoAgent — AI 驱动的地理空间分析平台
 
+[English](./README.en.md)
+
 > 用自然语言操控地图，AI 自动完成数据接入 → 空间分析 → 可视化渲染 → 报告生成
 
 ## 核心特性
@@ -10,6 +12,8 @@
 - **Cesium 3D 地球**：GeoJSON 渲染、3D Tiles、地形服务、影像服务、轨迹动画
 - **智能报告**：自动生成 Markdown 分析报告，支持下载
 - **流式输出**：SSE 实时推送 AI 思考过程、工具调用、地图指令
+- **多语言支持**：中文 / English 界面一键切换，AI 回复语言跟随
+- **自定义 LLM**：支持在前端配置 API Key / Base URL / Model，兼容 OpenAI / DeepSeek / 通义千问等
 
 ## 技术栈
 
@@ -72,6 +76,22 @@ cp backend/.env.example backend/.env
 docker-compose up --build
 # 前端：http://localhost:5173  后端：http://localhost:8000
 ```
+
+## 多语言 & LLM 配置
+
+### 语言切换
+点击右上角设置面板中的 **中文 / EN** 按钮即可切换界面语言。切换后：
+- 所有 UI 文案自动切换
+- AI 的 System Prompt 跟随当前语言
+- 语言偏好保存在 localStorage
+
+### 自定义 LLM
+在设置面板中可配置自定义 LLM 连接：
+- **API Key**：你的 LLM 提供商密钥
+- **Base URL**：API 基础地址（如 `https://api.openai.com/v1`）
+- **Model Name**：模型名称（如 `gpt-4o`、`deepseek-chat`）
+
+配置后点击"应用配置"，后续对话将使用你的自定义模型。未配置时使用服务端 `.env` 中的默认模型。
 
 ## 项目结构
 

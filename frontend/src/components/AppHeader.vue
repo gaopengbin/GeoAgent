@@ -90,6 +90,7 @@
               <input v-model="llmModelName" type="text" class="settings-input" :placeholder="$t('header.modelNamePlaceholder')">
             </div>
             <button class="apply-btn" @click="applyLLMConfig">{{ $t('header.applyConfig') }}</button>
+            <span v-if="configAppliedMsg" class="config-applied-msg">{{ configAppliedMsg }}</span>
           </div>
         </transition>
       </div>
@@ -102,11 +103,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConfigStore } from '../stores/configStore'
 
-const { locale } = useI18n()
-
-defineProps<{
-  showSidebar: boolean
-}>()
+const { t, locale } = useI18n()
 
 defineEmits(['toggleSidebar'])
 
@@ -114,8 +111,9 @@ const configStore = useConfigStore()
 const showModelMenu = ref(false)
 const showSettings = ref(false)
 const temperature = ref(parseFloat(localStorage.getItem('geoagent_temperature') ?? '0.3'))
+const configAppliedMsg = ref('')
 
-const llmApiKey = ref(localStorage.getItem('geoagent_llm_api_key') ?? '')
+const llmApiKey = ref(sessionStorage.getItem('geoagent_llm_api_key') ?? '')
 const llmBaseUrl = ref(localStorage.getItem('geoagent_llm_base_url') ?? '')
 const llmModelName = ref(localStorage.getItem('geoagent_llm_model') ?? '')
 
@@ -125,14 +123,19 @@ function switchLocale(lang: string) {
 }
 
 function applyLLMConfig() {
-  if (llmApiKey.value) localStorage.setItem('geoagent_llm_api_key', llmApiKey.value)
+  if (llmApiKey.value) sessionStorage.setItem('geoagent_llm_api_key', llmApiKey.value)
+  else sessionStorage.removeItem('geoagent_llm_api_key')
   if (llmBaseUrl.value) localStorage.setItem('geoagent_llm_base_url', llmBaseUrl.value)
+  else localStorage.removeItem('geoagent_llm_base_url')
   if (llmModelName.value) localStorage.setItem('geoagent_llm_model', llmModelName.value)
+  else localStorage.removeItem('geoagent_llm_model')
   configStore.llmOverride = {
     apiKey: llmApiKey.value || undefined,
     baseUrl: llmBaseUrl.value || undefined,
     model: llmModelName.value || undefined,
   }
+  configAppliedMsg.value = t('header.configApplied')
+  setTimeout(() => { configAppliedMsg.value = '' }, 2000)
 }
 
 function onTempChange(e: Event) {

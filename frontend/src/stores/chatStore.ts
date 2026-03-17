@@ -86,7 +86,7 @@ export const useChatStore = defineStore('chat', () => {
   function _cleanEmptySession(oldId: string | null) {
     if (!oldId) return
     const s = sessions.value.find(x => x.id === oldId)
-    if (s && s.messages.length === 0 && s.title === i18n.global.t('chat.newChat')) {
+    if (s && s.messages.length === 0) {
       sessions.value = sessions.value.filter(x => x.id !== oldId)
     }
   }
@@ -337,7 +337,7 @@ export const useChatStore = defineStore('chat', () => {
         resultStore.loadFromStorage(first.id)
       }
     } catch (e) {
-      console.warn('加载会话列表失败:', e)
+      console.warn('Failed to load sessions:', e)
     }
   }
 
@@ -364,7 +364,7 @@ export const useChatStore = defineStore('chat', () => {
         return msg
       })
     } catch (e) {
-      console.warn('加载会话消息失败:', e)
+      console.warn('Failed to load session messages:', e)
     }
   }
 

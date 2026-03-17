@@ -52,7 +52,7 @@ export const useConfigStore = defineStore('config', () => {
       cesiumRuntimeWsUrl.value = cfg.cesium_runtime_ws_url ?? ''
       loaded.value = true
     } catch (e) {
-      console.warn('加载配置失败:', e)
+      console.warn('Failed to load config:', e)
       loaded.value = true
     }
   }

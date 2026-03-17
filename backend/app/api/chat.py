@@ -144,7 +144,7 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
             # 新会话自动生成标题
             if not history:
                 try:
-                    title = await _generate_title(req.message, full_reply[:200])
+                    title = await _generate_title(req.message, full_reply[:200], locale)
                     session.title = title
                     await db.commit()
                     yield _sse("title", {"session_id": session_id, "title": title})
@@ -162,14 +162,22 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
     )
 
 
-async def _generate_title(user_message: str, ai_reply: str) -> str:
-    """用 fast LLM 为新会话生成简洁标题（≤15字）"""
+async def _generate_title(user_message: str, ai_reply: str, locale: str = "zh-CN") -> str:
+    """用 fast LLM 为新会话生成简洁标题"""
     llm = get_llm(tier="fast", temperature=0.3)
-    resp = await llm.ainvoke(
-        f"请为以下对话生成一个简洁的中文标题（不超过15个字，不要引号）：\n"
-        f"用户：{user_message[:100]}\n"
-        f"助手：{ai_reply[:150]}"
-    )
+    if locale == "en":
+        prompt = (
+            f"Generate a concise title (max 15 words, no quotes) for this conversation:\n"
+            f"User: {user_message[:100]}\n"
+            f"Assistant: {ai_reply[:150]}"
+        )
+    else:
+        prompt = (
+            f"请为以下对话生成一个简洁的中文标题（不超过15个字，不要引号）：\n"
+            f"用户：{user_message[:100]}\n"
+            f"助手：{ai_reply[:150]}"
+        )
+    resp = await llm.ainvoke(prompt)
     title = resp.content.strip().strip('"\'""''')
     return title[:30] if title else user_message[:50]
 
