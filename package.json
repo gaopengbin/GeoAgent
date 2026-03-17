@@ -1,0 +1,18 @@
+{
+  "name": "geoagent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GeoAgent — AI 驱动的地理空间分析平台",
+  "scripts": {
+    "dev": "concurrently -n fe,be,rt -c blue,green,magenta \"npm run dev:frontend\" \"npm run dev:backend\" \"npm run dev:runtime\"",
+    "dev:fe": "concurrently -n fe,be -c blue,green \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "scripts\\start-backend.bat",
+    "dev:runtime": "npx -y cesium-mcp-runtime --demo",
+    "build:frontend": "cd frontend && npm run build",
+    "typecheck": "cd frontend && npx vue-tsc --noEmit"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

@@ -1,0 +1,32 @@
+# Backend (not needed for frontend build)
+backend/
+data/
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+.windsurf/
+
+# Environment
+.env
+.env.*
+
+# Node
+frontend/node_modules
+frontend/dist
+packages/cesium-mcp-bridge/node_modules
+packages/cesium-mcp-bridge/dist
+packages/cesium-mcp-runtime/
+
+# Docs / Test
+docs/
+testdata/
+*.md
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "cesium-runtime": {
+      "command": "npx",
+      "args": ["-y", "cesium-mcp-runtime"],
+      "env": {
+        "DEFAULT_SESSION_ID": "geoagent"
+      }
+    },
+    "cesium-dev": {
+      "command": "npx",
+      "args": ["-y", "cesium-mcp-dev"]
+    }
+  }
+}

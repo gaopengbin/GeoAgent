@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[116.3780,39.9590],[116.4230,39.9590],[116.4230,39.9280],[116.4440,39.9280],[116.4440,39.8950],[116.3780,39.8950],[116.3780,39.9590]]]
+      },
+      "properties": {"name":"东城区","population":708800,"area_km2":41.84,"gdp_billion":312.5,"density":16942}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[116.3280,39.9590],[116.3780,39.9590],[116.3780,39.8950],[116.3280,39.8950],[116.3280,39.9590]]]
+      },
+      "properties": {"name":"西城区","population":1106200,"area_km2":50.7,"gdp_billion":456.8,"density":21819}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[116.4440,39.9800],[116.5300,39.9800],[116.5300,39.8500],[116.4440,39.8500],[116.4440,39.9800]]]
+      },
+      "properties": {"name":"朝阳区","population":3452000,"area_km2":470.8,"gdp_billion":712.3,"density":7331}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[116.2800,39.9590],[116.3280,39.9590],[116.3280,39.8600],[116.2200,39.8600],[116.2200,39.9200],[116.2800,39.9200],[116.2800,39.9590]]]
+      },
+      "properties": {"name":"丰台区","population":2019000,"area_km2":305.8,"gdp_billion":198.7,"density":6602}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[116.2200,39.9200],[116.2800,39.9200],[116.2800,39.9590],[116.3280,39.9590],[116.3280,40.0200],[116.2200,40.0200],[116.2200,39.9200]]]
+      },
+      "properties": {"name":"海淀区","population":3133000,"area_km2":430.8,"gdp_billion":896.4,"density":7274}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[116.3280,40.0200],[116.4440,40.0200],[116.4440,39.9590],[116.4230,39.9590],[116.3780,39.9590],[116.3280,39.9590],[116.3280,40.0200]]]
+      },
+      "properties": {"name":"西城区北（示意）","population":523000,"area_km2":35.2,"gdp_billion":128.6,"density":14858}
+    }
+  ]
+}
