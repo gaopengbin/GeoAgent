@@ -177,7 +177,7 @@
         <button
           v-if="isStreaming"
           class="send-btn cancel"
-          title="停止生成"
+          :title="$t('chat.stopGenerate')"
           @click="chatStore.cancelStream()"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -409,7 +409,7 @@ async function uploadFile(file: File) {
     const lines = [`📎 ${t('chat.fileUploaded')}：**${result.filename}**`]
     if (result.data_ref_id) {
       lines.push(`- ${t('chat.dataRef')}: \`${result.data_ref_id}\``)
-      lines.push(`- 要素数: ${result.feature_count}　类型: ${result.geometry_type ?? '未知'}　坐标系: ${result.crs}`)
+      lines.push(`- ${t('chat.featureCount')}: ${result.feature_count}　${t('chat.featureType')}: ${result.geometry_type ?? t('common.unknown')}　${t('chat.crs')}: ${result.crs}`)
       lines.push('')
       lines.push(t('chat.dataAutoRegistered'))
     } else {

@@ -12,6 +12,7 @@ export default {
     loading: '加载中...',
     noData: '(无数据)',
     unknownError: '未知错误',
+    unknown: '未知',
   },
   app: {
     openAnalysis: '打开分析面板',
@@ -63,6 +64,9 @@ export default {
     dataAutoRegistered: '数据已自动解析并注册，AI 可直接使用。请输入你的指令。',
     dataManualLoad: '文件已保存但未能自动解析，请尝试让 AI 加载此文件。',
     uploadFailed: '文件上传失败',
+    featureCount: '要素数',
+    featureType: '类型',
+    crs: '坐标系',
     configLoadFailed: '加载配置失败:',
     networkError: '网络错误：',
     newChat: '新对话',

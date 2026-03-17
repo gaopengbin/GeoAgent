@@ -12,6 +12,7 @@ export default {
     loading: 'Loading...',
     noData: '(No Data)',
     unknownError: 'Unknown error',
+    unknown: 'Unknown',
   },
   app: {
     openAnalysis: 'Open Analysis Panel',
@@ -63,6 +64,9 @@ export default {
     dataAutoRegistered: 'Data has been parsed and registered, AI can use it directly. Enter your instructions.',
     dataManualLoad: 'File saved but could not be parsed automatically. Try asking AI to load this file.',
     uploadFailed: 'File upload failed',
+    featureCount: 'Features',
+    featureType: 'Type',
+    crs: 'CRS',
     configLoadFailed: 'Failed to load config:',
     networkError: 'Network error: ',
     newChat: 'New Chat',
